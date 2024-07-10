@@ -13,7 +13,7 @@ export default class Simulation {
         this.turnCounter = 0;
         this.renderer = new Renderer();
         this.actions = [];
-        this.running = true;
+        this.isRunning = true;
 
         this.timeoutId = null;
     }
@@ -28,10 +28,10 @@ export default class Simulation {
     }
 
     startSimulation() {
-        if (!this.running) {
+        if (!this.isRunning) {
             console.log("Simulation continues")
-            this.running = true;
-        } else { // Running is true only of first launch or on restart
+            this.isRunning = true;
+        } else { // isRunning is true only of first launch or on restart
             console.log("Simulation started")
             this.initSimulation();
         }
@@ -41,7 +41,7 @@ export default class Simulation {
 
     pauseSimulation() {
         console.log("Simulation paused");
-        this.running = false;
+        this.isRunning = false;
 
         this.clearScheduledTimeouts();
     }
@@ -49,16 +49,16 @@ export default class Simulation {
     restartSimulation() {
         console.log("Simulation restarted");
         this.clearScheduledTimeouts();
-        
-        this.map.clearMap();
+
+        this.map.reloadMap();
         this.turnCounter = 0;
 
-        this.running = true;
+        this.isRunning = true;
         this.startSimulation();
     }
 
     runSimulation() {
-        if (this.running) {
+        if (this.isRunning) {
             console.log(`Turn ${this.turnCounter}`);
 
             this.nextTurn();
@@ -76,14 +76,17 @@ export default class Simulation {
     }
 
     nextTurn() {
+        // Find and iterate over every herbivore and carnivore and invoke makeMove method for each
         for (const obj of Object.keys(this.map.info)) {
             if (obj === "Herbivore" || obj === "Carnivore") {
                 for (const instance of this.map.info[obj].instances) {
-                    instance.makeMove();
+                    instance.makeMove(this.map.map);
                 }
             }
         }
-
+        // Update map after moves are made
+        this.map.updateMap();
+        // Redraw map on the turn end
         this.renderer.drawMap(this.map.map);
     }
 

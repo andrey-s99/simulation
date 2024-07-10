@@ -27,7 +27,7 @@ export default class Map {
         }
     }
 
-    // Update map info
+    // Update map info when new instances are added
     updateInfo(instances) {
         for (const instance of instances) {
             const className = instance.getClassName();
@@ -35,11 +35,13 @@ export default class Map {
             this.info[className].instances.push(instance);
         }
 
-        this.#updateMap();
+        this.updateMap();
     }
 
-    // Update map matrix with icons
-    #updateMap() {
+    // Update positions on map matrix
+    updateMap() {
+        this.clearMap();
+        
         for (const value of Object.values(this.info)) {
             for (const instance of value.instances) {
                 this.map[instance.y][instance.x] = instance.icon;
@@ -47,7 +49,7 @@ export default class Map {
         }
     }
 
-    // Clear map and map info
+    // Clear map
     clearMap() {
         // Fill map with ground only
         for (let i = 0; i < height; i++) {
@@ -56,7 +58,11 @@ export default class Map {
             }
         }
 
-        // Empty the info
+        
+    }
+
+    // Clear info
+    clearInfo() {
         this.info = {
             Grass: { amount: 0, instances: [] },
             Rock: { amount: 0, instances: [] },
@@ -65,5 +71,11 @@ export default class Map {
             Herbivore: { amount: 0, instances: [] },
             Carnivore: { amount: 0, instances: [] }
         };
+    }
+
+    // Reload map
+    reloadMap() {
+        this.clearMap();
+        this.clearInfo();
     }
 }
