@@ -1,7 +1,21 @@
 // Set map dimensions
 const width = 20;
 const height = 20;
+const tileSize = 50;
 const ground = "🟫";
+
+const herbivoreSpeed = 1;
+const herbivoreHp = 10;
+
+const carnivoreSpeed = 2;
+const carnivoreHp = 10;
+const carnivoreAttack = 5;
+
+const mapCanvas = document.getElementById("map-canvas");
+// Setting the height and width of canvas to fit the tiles
+mapCanvas.height = height * tileSize + 30; // Adding some padding to prevent cropping on right and bottom edges
+mapCanvas.width = width * tileSize + 30; // Very hacky but whatever
+const ctx = mapCanvas.getContext("2d");
 
 class Entity {
     constructor(x, y) {
@@ -58,8 +72,10 @@ class Rock extends Entity {
 }
 
 class Creature extends Entity {
-    constructor(x, y) {
+    constructor(x, y, speed, hp) {
         super(x, y);
+        this.speed = speed;
+        this.hp = hp;
     }
 
     makeMove(){}
@@ -67,9 +83,9 @@ class Creature extends Entity {
 
 class Herbivore extends Creature {
     constructor(x, y) {
-        super(x, y);
+        super(x, y, herbivoreSpeed, herbivoreHp);
 
-        this.icon = (Math.floor(Math.random() * 2) > 0) ? "🐄" : "🐂";;
+        this.icon = (Math.floor(Math.random() * 2) > 0) ? "🐄" : "🐇";;
     }
 
     makeMove() {
@@ -79,9 +95,11 @@ class Herbivore extends Creature {
 
 class Carnivore extends Creature {
     constructor(x, y) {
-        super(x, y);
+        super(x, y, carnivoreSpeed, carnivoreHp);
 
-        this.icon = (Math.floor(Math.random() * 2) > 0) ? "🐅" : "🐈";;
+        this.icon = (Math.floor(Math.random() * 2) > 0) ? "🐅" : "🐈";
+
+        this.attackDmg = carnivoreAttack;
     }
 
     makeMove() {
@@ -92,7 +110,7 @@ class Carnivore extends Creature {
 class Map {
     constructor() {
         this.map = [];
-        // Keeps track of the amount of instances and positions of each instance
+        // Keeps track of all instances and their amount
         this.info = {
             Grass: { amount: 0, instances: [] },
             Rock: { amount: 0, instances: [] },
@@ -111,6 +129,7 @@ class Map {
         }
     }
 
+    // Update map info
     updateInfo(instances) {
         for (const instance of instances) {
             const className = instance.getClassName();
@@ -118,10 +137,11 @@ class Map {
             this.info[className].instances.push(instance);
         }
 
-        this.updateMap();
+        this.#updateMap();
     }
 
-    updateMap() {
+    // Update map matrix
+    #updateMap() {
         for (const value of Object.values(this.info)) {
             for (const instance of value.instances) {
                 this.map[instance.y][instance.x] = instance.icon;
@@ -134,15 +154,18 @@ class Renderer {
     constructor() {}
 
     renderSimulation(map) {
-        let screen = "";
         for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
-                screen += map[i][j];
+                this.#drawTile(map[i][j], j, i);
             }
-            screen += "\n";
         }
 
         console.log(screen);
+    }
+
+    #drawTile(icon, x, y) {
+        ctx.font = `${tileSize}px sans-serif`;
+        ctx.fillText(icon, x * tileSize, y * tileSize + tileSize);
     }
 }
 
@@ -156,15 +179,21 @@ class Simulation {
 
     startSimulation() {
         // Generate random amounts of entities with random positions
+        const randomlyGeneratedInstances = this.#generateAllInstances();
+        // Update map.info
+        this.map.updateInfo(randomlyGeneratedInstances);
+        // Display map
+        this.renderer.renderSimulation(this.map.map);
+    }
+
+    #generateAllInstances() {
         let grass = Grass.generateInstances();
         let rocks = Rock.generateInstances();
         let trees = Tree.generateInstances();
         let herbivores = Herbivore.generateInstances();
         let carnivores = Carnivore.generateInstances();
-        // // Update map.info
-        this.map.updateInfo([...rocks, ...grass, ...trees, ...herbivores, ...carnivores]);
-        // // Display 
-        this.renderer.renderSimulation(this.map.map);
+
+        return [...rocks, ...grass, ...trees, ...herbivores, ...carnivores];
     }
 }
 
