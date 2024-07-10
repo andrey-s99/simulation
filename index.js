@@ -10,7 +10,7 @@ class Entity {
     }
 
     // Static method to generate instances of the class with positions
-    static generateInstances(min=2,max=5) {
+    static generateInstances(min=4,max=7) {
         let instances = [];
         // Get a random number between min and max including both
         const limit = Math.floor(Math.random() * (max + 1 - min) + min);
@@ -24,6 +24,11 @@ class Entity {
         }
 
         return instances;
+    }
+
+    // Get the class name
+    getClassName() {
+        return this.constructor.name;
     }
 }
 
@@ -89,12 +94,12 @@ class Map {
         this.map = [];
         // Keeps track of the amount of instances and positions of each instance
         this.info = {
-            grass: { amount: 0, position: []},
-            rocks: { amount: 0, position: []},
-            // trees: { amount: 0, position: []},
+            Grass: { amount: 0, instances: [] },
+            Rock: { amount: 0, instances: [] },
+            Tree: { amount: 0, instances: [] },
 
-            // herbivores: { amount: 0, position: []},
-            // carnivores: { amount: 0, position: []}
+            Herbivore: { amount: 0, instances: [] },
+            Carnivore: { amount: 0, instances: [] }
         }
 
         // Create an empty map on instantiation
@@ -106,21 +111,11 @@ class Map {
         }
     }
 
-    updateGrass(grass) {
-        for (const inst of grass) {
-            this.info.grass.position.push([inst.x, inst.y]);
-
-            this.info.grass.amount++;
-        }
-
-        this.updateMap();
-    }
-
-    updateRocks(rocks) {
-        for (const inst of rocks) {
-            this.info.rocks.position.push([inst.x, inst.y]);
-
-            this.info.rocks.amount++;
+    updateInfo(instances) {
+        for (const instance of instances) {
+            const className = instance.getClassName();
+            this.info[className].amount++;
+            this.info[className].instances.push(instance);
         }
 
         this.updateMap();
@@ -128,8 +123,8 @@ class Map {
 
     updateMap() {
         for (const value of Object.values(this.info)) {
-            for (const pos of value.position) {
-                this.map[pos[1]][pos[0]] = "🌿";
+            for (const instance of value.instances) {
+                this.map[instance.y][instance.x] = instance.icon;
             }
         }
     }
@@ -139,7 +134,6 @@ class Renderer {
     constructor() {}
 
     renderSimulation(map) {
-        console.log(map);
         let screen = "";
         for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
@@ -157,17 +151,18 @@ class Simulation {
         this.map = new Map();
         this.turnCounter = 0;
         this.renderer = new Renderer();
+        this.actions = [];
     }
 
     startSimulation() {
         // Generate random amounts of entities with random positions
         let grass = Grass.generateInstances();
-        console.log(grass);
         let rocks = Rock.generateInstances();
-        console.log(rocks);
+        let trees = Tree.generateInstances();
+        let herbivores = Herbivore.generateInstances();
+        let carnivores = Carnivore.generateInstances();
         // // Update map.info
-        this.map.updateGrass(grass);
-        this.map.updateRocks(rocks);
+        this.map.updateInfo([...rocks, ...grass, ...trees, ...herbivores, ...carnivores]);
         // // Display 
         this.renderer.renderSimulation(this.map.map);
     }
