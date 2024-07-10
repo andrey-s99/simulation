@@ -25,6 +25,14 @@ export default class Simulation {
         this.renderer.drawMap(this.map.map);
     }
 
+    pauseSimulation() {
+        console.log("Simulation paused!");
+    }
+
+    restartSimulation() {
+        console.log("Simulation restarted!");
+    }
+
     #generateAllInstances() {
         let grass = Grass.generateInstances();
         let rocks = Rock.generateInstances();

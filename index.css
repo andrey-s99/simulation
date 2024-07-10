@@ -3,6 +3,43 @@ html, body {
     margin: 0;
 }
 
-canvas {
-    margin: 100px;
+.heading {
+    display: flex;
+    flex-direction: row;
+
+    justify-content: center;    
+    align-items: center;
+
+    margin-top: 25px;
+}
+
+.header {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 50px;
+    font-weight: 600;
+    margin: 0;
+    margin-right: 30px;
+}
+
+.canvas-div {
+    display: flex;
+
+    justify-content: center;    
+    align-items: center;
+
+    margin-top: 50px;
+}
+
+button {
+    width: 50px;
+
+    font-size: 30px;
+    text-align: center;
+
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 1);
+    border: 0;
+
+    margin-top: 10px;
+
 }

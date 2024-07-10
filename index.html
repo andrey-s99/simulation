@@ -3,11 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/b5038976e4.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="index.css">
     <title>Simulation</title>
 </head>
 <body>
-    <canvas id="map-canvas"></canvas>
+    <div class="heading">
+        <h2 class="header">Simulation</h2>
+        <button class="fas fa-play" value="start" id="play-pause-button"></button>
+        <button class="fa fa-refresh" value="restart" id="restart-button"></button>
+    </div>
+    
+
+    <div class="canvas-div">
+        <canvas id="map-canvas"></canvas>
+    </div>
+    
 
 
     <script src="configuration.js" type="module"></script>
