@@ -38,12 +38,32 @@ export default class Map {
         this.#updateMap();
     }
 
-    // Update map matrix
+    // Update map matrix with icons
     #updateMap() {
         for (const value of Object.values(this.info)) {
             for (const instance of value.instances) {
                 this.map[instance.y][instance.x] = instance.icon;
             }
         }
+    }
+
+    // Clear map and map info
+    clearMap() {
+        // Fill map with ground only
+        for (let i = 0; i < height; i++) {
+            for (let j = 0; j < width; j++) {
+                this.map[i][j] = ground;
+            }
+        }
+
+        // Empty the info
+        this.info = {
+            Grass: { amount: 0, instances: [] },
+            Rock: { amount: 0, instances: [] },
+            Tree: { amount: 0, instances: [] },
+
+            Herbivore: { amount: 0, instances: [] },
+            Carnivore: { amount: 0, instances: [] }
+        };
     }
 }

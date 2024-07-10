@@ -2,12 +2,9 @@ import Creature from "../creature.js"
 import Configuration from "../configuration.js";
 const config = new Configuration();
 
-const herbivoreSpeed = config.herbivoreSpeed;
-const herbivoreHp = config.herbivoreHp;
-
 export default class Herbivore extends Creature {
     constructor(x, y) {
-        super(x, y, herbivoreSpeed, herbivoreHp);
+        super(x, y, config.herbivoreSpeed, config.herbivoreHp);
 
         this.icon = (Math.floor(Math.random() * 2) > 0) ? "🐄" : "🐇";;
     }

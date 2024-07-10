@@ -25,7 +25,5 @@ const processRestartButton = () => {
     simulation.restartSimulation();
 }
 
-simulation.startSimulation();
-
 playPauseBtn.addEventListener("click", processPlayPauseButton);
 restartBtn.addEventListener("click", processRestartButton);

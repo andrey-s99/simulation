@@ -31,6 +31,8 @@ export default class Simulation {
 
     restartSimulation() {
         console.log("Simulation restarted!");
+        this.map.clearMap();
+        this.startSimulation();
     }
 
     #generateAllInstances() {
