@@ -13,10 +13,12 @@ export default class Simulation {
         this.turnCounter = 0;
         this.renderer = new Renderer();
         this.actions = [];
+        this.running = true;
+
+        this.timeoutId = null;
     }
 
-    startSimulation() {
-        console.log("Simulation started!")
+    initSimulation() {
         // Generate random amounts of entities with random positions
         const randomlyGeneratedInstances = this.#generateAllInstances();
         // Update map.info
@@ -25,14 +27,64 @@ export default class Simulation {
         this.renderer.drawMap(this.map.map);
     }
 
+    startSimulation() {
+        if (!this.running) {
+            console.log("Simulation continues")
+            this.running = true;
+        } else { // Running is true only of first launch or on restart
+            console.log("Simulation started")
+            this.initSimulation();
+        }
+
+        this.runSimulation();
+    }
+
     pauseSimulation() {
-        console.log("Simulation paused!");
+        console.log("Simulation paused");
+        this.running = false;
+
+        this.clearScheduledTimeouts();
     }
 
     restartSimulation() {
-        console.log("Simulation restarted!");
+        console.log("Simulation restarted");
+        this.clearScheduledTimeouts();
+        
         this.map.clearMap();
+        this.turnCounter = 0;
+
+        this.running = true;
         this.startSimulation();
+    }
+
+    runSimulation() {
+        if (this.running) {
+            console.log(`Turn ${this.turnCounter}`);
+
+            this.nextTurn();
+
+            this.timeoutId = setTimeout(() => {
+                this.runSimulation();
+                }, 2000);
+
+            this.turnCounter++;
+        }
+    }
+
+    clearScheduledTimeouts() {
+        clearTimeout(this.timeoutId);
+    }
+
+    nextTurn() {
+        for (const obj of Object.keys(this.map.info)) {
+            if (obj === "Herbivore" || obj === "Carnivore") {
+                for (const instance of this.map.info[obj].instances) {
+                    instance.makeMove();
+                }
+            }
+        }
+
+        this.renderer.drawMap(this.map.map);
     }
 
     #generateAllInstances() {

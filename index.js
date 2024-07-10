@@ -5,17 +5,22 @@ const simulation = new Simulation();
 const playPauseBtn = document.getElementById("play-pause-button");
 const restartBtn = document.getElementById("restart-button");
 
+// Disable restart button on first launch
+restartBtn.disabled = true;
+
 const processPlayPauseButton = (e) => {
-    const btn = e.target;
 
-    if (btn.classList.contains("fa-play")) {
-        btn.classList.remove("fa-play");
-        btn.classList.add("fa-pause");
+    if (playPauseBtn.classList.contains("fa-play")) {
+        playPauseBtn.classList.remove("fa-play");
+        playPauseBtn.classList.add("fa-pause");
 
+        if (restartBtn.disabled) {
+            restartBtn.disabled = false;
+        }
         simulation.startSimulation();
     } else {
-        btn.classList.remove("fa-pause");
-        btn.classList.add("fa-play");
+        playPauseBtn.classList.remove("fa-pause");
+        playPauseBtn.classList.add("fa-play");
 
         simulation.pauseSimulation();
     }
@@ -23,6 +28,12 @@ const processPlayPauseButton = (e) => {
 
 const processRestartButton = () => {
     simulation.restartSimulation();
+
+    // Change play button to pause button
+    if (playPauseBtn.classList.contains("fa-play")) {
+        playPauseBtn.classList.remove("fa-play");
+        playPauseBtn.classList.add("fa-pause");
+    }
 }
 
 playPauseBtn.addEventListener("click", processPlayPauseButton);
