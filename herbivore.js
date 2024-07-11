@@ -19,36 +19,68 @@ export default class Herbivore extends Creature {
                     x: x,
                     y: y,
                     icon: map[y][x],
-                    visited: false
+                    visited: false,
+                    parent: null
                 }
 
                 allNodes[y][x] = node;
             }
         }
 
+        const isTreeOrRock = (icon) => {
+            return icon === "🌳" || icon === "🌲" || icon === "⛰️";
+        }
+
         // Find all children of the node
         const findChildren = (node) => {
             let children = [];
 
-            // Go in clockwise direction
-            if (node.y - 1 >= 0) {
-                children.push(allNodes[node.y - 1][node.x]);
+            // Check all moves that are possible with the current speed
+            let step = 1;
+            while (step <= this.speed && this.speed !== 0) {
+                // Go in clockwise direction
+                // Avoid trees and rocks as it is not possible to step on them
+                if (node.y - step >= 0 && !isTreeOrRock(allNodes[node.y - step][node.x].icon)) {
+                    children.push(allNodes[node.y - step][node.x]);
+                }
+                
+                if (node.x + step < config.width && !isTreeOrRock(allNodes[node.y][node.x + step].icon)) {
+                    children.push(allNodes[node.y][node.x + step]);
+                }
+
+                if (node.y + step < config.height && !isTreeOrRock(allNodes[node.y + step][node.x].icon)) {
+                    children.push(allNodes[node.y + step][node.x]);
+                }
+                
+                if (node.x - step >= 0 && !isTreeOrRock(allNodes[node.y][node.x - step].icon)) {
+                    children.push(allNodes[node.y][node.x - step]);
+                }
+
+                // Increase step by 1
+                step++;
             }
             
-            if (node.x + 1 < config.width) {
-                children.push(allNodes[node.y][node.x + 1]);
-            }
-
-            if (node.y + 1 < config.height) {
-                children.push(allNodes[node.y + 1][node.x]);
-            }
-            
-            if (node.x - 1 >= 0) {
-                children.push(allNodes[node.y][node.x - 1]);
-            }
-
             return children;
         }
+
+        // Get path to a node by looking through its parents
+        const getPath = (node) => {
+            // If parent is null then we did not find the goal
+            if (node.parent === null) {
+                // return an empty path
+                return [];
+            }
+
+            let path = [];
+
+            let currentNode = node;
+            while (currentNode.parent) {
+                path.unshift([currentNode.x, currentNode.y]);
+                currentNode = currentNode.parent;
+            }
+
+            return path;
+        } 
 
         // Breadth-first search algorithm to help herbivores find the nearest grass
         // Find a path and return a list of nodes that lead to it
@@ -59,23 +91,14 @@ export default class Herbivore extends Creature {
             // Push the start node to the queue
             queue.push(start);
 
-            // Store path that consists of nodes
-            let path = [];
-
-            // Push the start node to the path
-            path.push(start);
-
             // Pull nodes from queue until it is empty
             while(queue.length) {
                 // Pop the node from queue to check it
                 let node = queue.shift();
-                
-                // Push node to the path
-                path.push(node);
 
                 // Return path if reached the goal
                 if (node.icon === goal) {
-                    return node;
+                    return getPath(node);
                 }
                 allNodes[node.y][node.x].visited = true;
 
@@ -83,16 +106,21 @@ export default class Herbivore extends Creature {
                 for (const child of findChildren(node)) {
                     // Look only on unvisited ones
                     if (!allNodes[child.y][child.x].visited) {
-                        queue.push(child);
+                        allNodes[child.y][child.x].parent = node;
                         allNodes[child.y][child.x].visited = true;
+                        queue.push(child);
                     }
                 }
             }
 
-            // Return one node path if no grass is find
-            return node;
+            // Return empty path if goal is not found
+            return [];
         }
 
-        console.log(`${this.icon} from ${this.x}:${this.y} has found` + JSON.stringify(BFS(allNodes[this.y][this.x], "🌿")));
+        let pathToGoal = BFS(allNodes[this.y][this.x], "🌿");
+
+        // Update position
+        this.x = pathToGoal[0][0];
+        this.y = pathToGoal[0][1];
     }
 }
