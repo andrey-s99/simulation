@@ -14,5 +14,18 @@ export default class Configuration {
         this.carnivoreSpeed = 1;
         this.carnivoreHp = 20;
         this.carnivoreDmg = 5;
+
+        this.icons = {
+            tree1: "🌲",
+            tree2: "🌳",
+            grass: "🌿",
+            rock: "⛰️",
+
+            herbivore1: "🐄",
+            herbivore2: "🐇",
+
+            carnivore1: "🐅",
+            carnivore2: "🐈"
+        }
     }
 }

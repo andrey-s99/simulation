@@ -56,9 +56,7 @@ export default class Map {
             for (let j = 0; j < width; j++) {
                 this.map[i][j] = ground;
             }
-        }
-
-        
+        }   
     }
 
     // Clear info

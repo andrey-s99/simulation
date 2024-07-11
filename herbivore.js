@@ -6,7 +6,7 @@ export default class Herbivore extends Creature {
     constructor(x, y) {
         super(x, y, config.herbivoreSpeed, config.herbivoreHp);
 
-        this.icon = (Math.floor(Math.random() * 2) > 0) ? "🐄" : "🐇";;
+        this.icon = (Math.floor(Math.random() * 2) > 0) ? config.icons.herbivore1 : config.icons.herbivore2;
     }
 
     makeMove(map) {
@@ -27,8 +27,18 @@ export default class Herbivore extends Creature {
             }
         }
 
-        const isTreeOrRock = (icon) => {
-            return icon === "🌳" || icon === "🌲" || icon === "⛰️";
+        const isOtherEntity = (iconToCheck) => {
+            let allIcons = Object.values(config.icons);
+            // Remove grass
+            allIcons.splice(allIcons.findIndex(el => el ===config.icons.grass), 1);
+
+            console.log(allIcons);
+            for (const icon of allIcons) {
+                if (iconToCheck === icon) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         // Find all children of the node
@@ -40,19 +50,19 @@ export default class Herbivore extends Creature {
             while (step <= this.speed && this.speed !== 0) {
                 // Go in clockwise direction
                 // Avoid trees and rocks as it is not possible to step on them
-                if (node.y - step >= 0 && !isTreeOrRock(allNodes[node.y - step][node.x].icon)) {
+                if (node.y - step >= 0 && !isOtherEntity(allNodes[node.y - step][node.x].icon)) {
                     children.push(allNodes[node.y - step][node.x]);
                 }
                 
-                if (node.x + step < config.width && !isTreeOrRock(allNodes[node.y][node.x + step].icon)) {
+                if (node.x + step < config.width && !isOtherEntity(allNodes[node.y][node.x + step].icon)) {
                     children.push(allNodes[node.y][node.x + step]);
                 }
 
-                if (node.y + step < config.height && !isTreeOrRock(allNodes[node.y + step][node.x].icon)) {
+                if (node.y + step < config.height && !isOtherEntity(allNodes[node.y + step][node.x].icon)) {
                     children.push(allNodes[node.y + step][node.x]);
                 }
                 
-                if (node.x - step >= 0 && !isTreeOrRock(allNodes[node.y][node.x - step].icon)) {
+                if (node.x - step >= 0 && !isOtherEntity(allNodes[node.y][node.x - step].icon)) {
                     children.push(allNodes[node.y][node.x - step]);
                 }
 
@@ -117,7 +127,7 @@ export default class Herbivore extends Creature {
             return [];
         }
 
-        let pathToGoal = BFS(allNodes[this.y][this.x], "🌿");
+        let pathToGoal = BFS(allNodes[this.y][this.x], config.icons.grass);
 
         // Update position
         this.x = pathToGoal[0][0];

@@ -6,7 +6,7 @@ export default class Carnivore extends Creature {
     constructor(x, y) {
         super(x, y, config.carnivoreSpeed, config.carnivoreHp);
 
-        this.icon = (Math.floor(Math.random() * 2) > 0) ? "🐅" : "🐈";
+        this.icon = (Math.floor(Math.random() * 2) > 0) ? config.icons.carnivore1 : config.icons.carnivore2;
 
         this.attackDmg = config.carnivoreDmg;
     }
