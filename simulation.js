@@ -80,7 +80,7 @@ export default class Simulation {
         for (const obj of Object.keys(this.map.info)) {
             if (obj === "Herbivore" || obj === "Carnivore") {
                 for (const instance of this.map.info[obj].instances) {
-                    instance.makeMove(this.map.map);
+                    instance.makeMove(this.map);
                 }
             }
         }

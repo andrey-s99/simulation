@@ -18,7 +18,7 @@ export default class Herbivore extends Creature {
                 let node = {
                     x: x,
                     y: y,
-                    icon: map[y][x],
+                    icon: map.map[y][x],
                     visited: false,
                     parent: null
                 }
@@ -27,12 +27,12 @@ export default class Herbivore extends Creature {
             }
         }
 
+        // Check if the cell is another entity and avoid it if so
         const isOtherEntity = (iconToCheck) => {
             let allIcons = Object.values(config.icons);
             // Remove grass
             allIcons.splice(allIcons.findIndex(el => el ===config.icons.grass), 1);
 
-            console.log(allIcons);
             for (const icon of allIcons) {
                 if (iconToCheck === icon) {
                     return true;
@@ -129,8 +129,21 @@ export default class Herbivore extends Creature {
 
         let pathToGoal = BFS(allNodes[this.y][this.x], config.icons.grass);
 
-        // Update position
-        this.x = pathToGoal[0][0];
-        this.y = pathToGoal[0][1];
+        // Do nothing if no path
+        if (!pathToGoal.length) {
+            return;
+        }
+
+        // Update positio
+        const newX = pathToGoal[0][0];
+        const newY = pathToGoal[0][1];
+
+        // If lands on grass -- eat grass before moving
+        if (map.map[newY][newX] === config.icons.grass) {
+            map.removeInstance(newX, newY, "Grass");
+        }
+
+        this.x = newX;
+        this.y = newY;
     }
 }

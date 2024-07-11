@@ -27,6 +27,24 @@ export default class Map {
         }
     }
 
+    // Remove instances of grass and herbivores when eaten
+    removeInstance(x, y, name) {
+        // Find the instance to remove
+        const allInstances = this.info[name].instances;
+        for (let i = 0; i < allInstances.length; i++) {
+            if (allInstances[i].x === x && allInstances[i].y === y) {
+                allInstances.splice(i, 1);
+                break;
+            }
+        }
+
+        // Decrease the amount
+        this.info[name].amount--;
+
+        // Update map to display changes
+        this.updateMap();
+    }
+
     // Update map info when new instances are added
     updateInfo(instances) {
         for (const instance of instances) {
