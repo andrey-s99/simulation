@@ -16,7 +16,7 @@ export default class Renderer {
 
         for (let i = 0; i < config.height; i++) {
             for (let j = 0; j < config.width; j++) {
-                this.#drawTile(map[i][j], j, i);
+                this.#drawTile(map[i][j].icon, j, i);
             }
         }
     }

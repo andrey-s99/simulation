@@ -18,11 +18,19 @@ export default class Map {
             Carnivore: { amount: 0, instances: [] }
         }
 
-        // Create an empty map on instantiation
-        for (let i = 0; i < height; i++) {
-            this.map[i] = []
-            for (let j = 0; j < width; j++) {
-                this.map[i][j] = ground;
+        // Create an empty 2D array of nodes to represent the map for the renderer and BFS algorithm
+        for (let y = 0; y < config.height; y++) {
+            this.map[y] = [];
+            for (let x = 0; x < config.width; x++) {
+                let node = {
+                    x: x,
+                    y: y,
+                    icon: ground,
+                    visited: false,
+                    parent: null
+                }
+
+                this.map[y][x] = node;
             }
         }
     }
@@ -62,7 +70,7 @@ export default class Map {
         
         for (const value of Object.values(this.info)) {
             for (const instance of value.instances) {
-                this.map[instance.y][instance.x] = instance.icon;
+                this.map[instance.y][instance.x].icon = instance.icon;
             }
         }
     }
@@ -72,7 +80,9 @@ export default class Map {
         // Fill map with ground only
         for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
-                this.map[i][j] = ground;
+                this.map[i][j].icon = ground;
+                this.map[i][j].visited = false;
+                this.map[i][j].parent = null;
             }
         }   
     }

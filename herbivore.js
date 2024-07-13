@@ -1,4 +1,5 @@
 import Creature from "../creature.js"
+import BFS from "../BFS.js";
 import Configuration from "../configuration.js";
 const config = new Configuration();
 
@@ -10,136 +11,21 @@ export default class Herbivore extends Creature {
     }
 
     makeMove(map) {
-        // Remake the map as an array of nodes for the search algorithm
-        let allNodes = []
-        for (let y = 0; y < config.height; y++) {
-            allNodes[y] = [];
-            for (let x = 0; x < config.width; x++) {
-                let node = {
-                    x: x,
-                    y: y,
-                    icon: map.map[y][x],
-                    visited: false,
-                    parent: null
-                }
-
-                allNodes[y][x] = node;
-            }
-        }
-
-        // Check if the cell is another entity and avoid it if so
-        const isOtherEntity = (iconToCheck) => {
-            let allIcons = Object.values(config.icons);
-            // Remove grass
-            allIcons.splice(allIcons.findIndex(el => el ===config.icons.grass), 1);
-
-            for (const icon of allIcons) {
-                if (iconToCheck === icon) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        // Find all children of the node
-        const findChildren = (node) => {
-            let children = [];
-
-            // Check all moves that are possible with the current speed
-            let step = 1;
-            while (step <= this.speed && this.speed !== 0) {
-                // Go in clockwise direction
-                // Avoid trees and rocks as it is not possible to step on them
-                if (node.y - step >= 0 && !isOtherEntity(allNodes[node.y - step][node.x].icon)) {
-                    children.push(allNodes[node.y - step][node.x]);
-                }
-                
-                if (node.x + step < config.width && !isOtherEntity(allNodes[node.y][node.x + step].icon)) {
-                    children.push(allNodes[node.y][node.x + step]);
-                }
-
-                if (node.y + step < config.height && !isOtherEntity(allNodes[node.y + step][node.x].icon)) {
-                    children.push(allNodes[node.y + step][node.x]);
-                }
-                
-                if (node.x - step >= 0 && !isOtherEntity(allNodes[node.y][node.x - step].icon)) {
-                    children.push(allNodes[node.y][node.x - step]);
-                }
-
-                // Increase step by 1
-                step++;
-            }
-            
-            return children;
-        }
-
-        // Get path to a node by looking through its parents
-        const getPath = (node) => {
-            // If parent is null then we did not find the goal
-            if (node.parent === null) {
-                // return an empty path
-                return [];
-            }
-
-            let path = [];
-
-            let currentNode = node;
-            while (currentNode.parent) {
-                path.unshift([currentNode.x, currentNode.y]);
-                currentNode = currentNode.parent;
-            }
-
-            return path;
-        } 
-
-        // Breadth-first search algorithm to help herbivores find the nearest grass
-        // Find a path and return a list of nodes that lead to it
-        const BFS = (start, goal) => {
-            // Queue to keep the nodes
-            let queue = [];
-
-            // Push the start node to the queue
-            queue.push(start);
-
-            // Pull nodes from queue until it is empty
-            while(queue.length) {
-                // Pop the node from queue to check it
-                let node = queue.shift();
-
-                // Return path if reached the goal
-                if (node.icon === goal) {
-                    return getPath(node);
-                }
-                allNodes[node.y][node.x].visited = true;
-
-                // Check all children of the current node
-                for (const child of findChildren(node)) {
-                    // Look only on unvisited ones
-                    if (!allNodes[child.y][child.x].visited) {
-                        allNodes[child.y][child.x].parent = node;
-                        allNodes[child.y][child.x].visited = true;
-                        queue.push(child);
-                    }
-                }
-            }
-
-            // Return empty path if goal is not found
-            return [];
-        }
-
-        let pathToGoal = BFS(allNodes[this.y][this.x], config.icons.grass);
+        const HerbivoreBFS = new BFS(map.map, this.speed, [config.icons.grass], this.x, this.y);
+        const pathToGoal = HerbivoreBFS.findPath();
 
         // Do nothing if no path
         if (!pathToGoal.length) {
+            console.log(`${this.icon} at ${this.x} and ${this.y} did not find path. Found path is ${pathToGoal}`);
             return;
         }
 
-        // Update positio
+        // Update position
         const newX = pathToGoal[0][0];
         const newY = pathToGoal[0][1];
 
         // If lands on grass -- eat grass before moving
-        if (map.map[newY][newX] === config.icons.grass) {
+        if (map.map[newY][newX].icon === config.icons.grass) {
             map.removeInstance(newX, newY, "Grass");
         }
 
