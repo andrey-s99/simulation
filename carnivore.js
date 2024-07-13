@@ -2,6 +2,8 @@ import Creature from "../creature.js"
 import Configuration from "../configuration.js";
 const config = new Configuration();
 
+import BFS from "../BFS.js";
+
 export default class Carnivore extends Creature {
     constructor(x, y) {
         super(x, y, config.carnivoreSpeed, config.carnivoreHp);
@@ -11,7 +13,26 @@ export default class Carnivore extends Creature {
         this.attackDmg = config.carnivoreDmg;
     }
 
-    makeMove() {
-        console.log("Carnivore makes a move");
+    makeMove(map) {
+        const CarnivoreBFS = new BFS(map.map, this.speed, [config.icons.herbivore1], this.x, this.y);
+        const pathToGoal = CarnivoreBFS.findPath();
+
+        // Do nothing if no path
+        if (!pathToGoal.length) {
+            console.log(`${this.icon} at ${this.x} and ${this.y} did not find path. Found path is ${pathToGoal}`);
+            return;
+        }
+
+        // Update position
+        const newX = pathToGoal[0][0];
+        const newY = pathToGoal[0][1];
+
+        // If lands on goal -- eat goal before moving
+        if ([config.icons.herbivore1].includes(map.map[newY][newX].icon)) {
+            map.removeInstance(newX, newY, "Herbivore");
+        }
+
+        this.x = newX;
+        this.y = newY;
     }
 }

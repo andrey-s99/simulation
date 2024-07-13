@@ -7,7 +7,7 @@ export default class Herbivore extends Creature {
     constructor(x, y) {
         super(x, y, config.herbivoreSpeed, config.herbivoreHp);
 
-        this.icon = (Math.floor(Math.random() * 2) > 0) ? config.icons.herbivore1 : config.icons.herbivore2;
+        this.icon = config.icons.herbivore1;
     }
 
     makeMove(map) {

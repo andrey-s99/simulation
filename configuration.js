@@ -22,7 +22,7 @@ export default class Configuration {
             rock: "⛰️",
 
             herbivore1: "🐄",
-            herbivore2: "🐇",
+
 
             carnivore1: "🐅",
             carnivore2: "🐈"
