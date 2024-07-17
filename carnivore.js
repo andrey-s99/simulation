@@ -37,7 +37,7 @@ export default class Carnivore extends Creature {
     }
 
     makeAttack(prey, map) {
-        console.log(`Carnivore attacks ${prey} for ${this.attackDmg} damage`);
+        console.log(`${this.icon} attacks ${prey.icon} for ${this.attackDmg} damage`);
         prey.hp -= this.attackDmg;
         if (prey.hp <= 0) {
             map.removeInstance(prey.x, prey.y, "Herbivore");

@@ -7,22 +7,24 @@ import Herbivore from "../herbivore.js"
 import Renderer from "../renderer.js"
 import Map from "../map.js"
 
+import ActionInit from "../actionInit.js"
+import ActionTurn from "../actionTurn.js"
+
 export default class Simulation {
     constructor() {
         this.map = new Map();
         this.turnCounter = 0;
         this.renderer = new Renderer();
-        this.actions = [];
+        this.initActions = [new ActionInit()];
+        this.turnActions = [new ActionTurn()];
         this.isRunning = true;
 
         this.timeoutId = null;
     }
 
     initSimulation() {
-        // Generate random amounts of entities with random positions
-        const randomlyGeneratedInstances = this.#generateAllInstances();
-        // Update map.info
-        this.map.updateInfo(randomlyGeneratedInstances);
+        // Generate random amounts of entities with random positions and update map
+        this.initActions[0].fillMapWithEntities(this.map);
         // Display map
         this.renderer.drawMap(this.map.map);
     }
@@ -76,28 +78,10 @@ export default class Simulation {
     }
 
     nextTurn() {
-        // Find and iterate over every herbivore and carnivore and invoke makeMove method for each
-        for (const obj of Object.keys(this.map.info)) {
-            if (obj === "Herbivore" || obj === "Carnivore") {
-                for (const instance of this.map.info[obj].instances) {
-                    instance.makeMove(this.map);
-                    // Update map after every move
-                    this.map.updateMap();
-                }
-            }
-        }
+        // Iterate over every Creature and invoke makeMove method for each
+        this.turnActions[0].makeMoves(this.map);
 
         // Redraw map on the turn end
         this.renderer.drawMap(this.map.map);
-    }
-
-    #generateAllInstances() {
-        let grass = Grass.generateInstances();
-        let rocks = Rock.generateInstances();
-        let trees = Tree.generateInstances();
-        let herbivores = Herbivore.generateInstances();
-        let carnivores = Carnivore.generateInstances();
-
-        return [...rocks, ...grass, ...trees, ...herbivores, ...carnivores];
     }
 }
