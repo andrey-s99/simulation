@@ -59,7 +59,7 @@ export default class BFS {
         let children = [];
 
         // Check all moves that are possible with the current maxStep
-        for (let step = 1; step <= this.maxStep; step++) {
+        for (let step = this.maxStep; step > 0; step--) {
             let potentialMoves = [
                 {y: node.y - step, x: node.x}, // up
                 {y: node.y, x: node.x + step}, // right

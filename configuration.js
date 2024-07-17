@@ -11,7 +11,7 @@ export default class Configuration {
         this.herbivoreSpeed = 1;
         this.herbivoreHp = 20;
 
-        this.carnivoreSpeed = 1;
+        this.carnivoreSpeed = 2;
         this.carnivoreHp = 20;
         this.carnivoreDmg = 5;
 

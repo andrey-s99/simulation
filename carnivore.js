@@ -19,7 +19,7 @@ export default class Carnivore extends Creature {
 
         // Do nothing if no path
         if (!pathToGoal.length) {
-            console.log(`${this.icon} at ${this.x} and ${this.y} did not find path. Found path is ${pathToGoal}`);
+            console.log(`${this.icon} at ${this.x} and ${this.y} did not find path`);
             return;
         }
 
