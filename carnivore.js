@@ -35,4 +35,8 @@ export default class Carnivore extends Creature {
         this.x = newX;
         this.y = newY;
     }
+
+    makeAttack() {
+        console.log("Carnivore makes attack");
+    }
 }
