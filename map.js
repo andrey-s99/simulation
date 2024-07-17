@@ -53,6 +53,17 @@ export default class Map {
         this.updateMap();
     }
 
+    // Get an instance from map info
+    getInstance(x, y, name) {
+         // Find the instance
+         const allInstances = this.info[name].instances;
+         for (let i = 0; i < allInstances.length; i++) {
+             if (allInstances[i].x === x && allInstances[i].y === y) {
+                return allInstances[i];
+            }
+        }
+    }
+
     // Update map info when new instances are added
     updateInfo(instances) {
         for (const instance of instances) {

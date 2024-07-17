@@ -13,7 +13,7 @@ export default class Configuration {
 
         this.carnivoreSpeed = 2;
         this.carnivoreHp = 20;
-        this.carnivoreDmg = 5;
+        this.carnivoreDmg = 10;
 
         this.icons = {
             tree1: "🌲",

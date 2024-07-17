@@ -81,11 +81,12 @@ export default class Simulation {
             if (obj === "Herbivore" || obj === "Carnivore") {
                 for (const instance of this.map.info[obj].instances) {
                     instance.makeMove(this.map);
+                    // Update map after every move
+                    this.map.updateMap();
                 }
             }
         }
-        // Update map after moves are made
-        this.map.updateMap();
+
         // Redraw map on the turn end
         this.renderer.drawMap(this.map.map);
     }

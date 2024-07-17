@@ -9,19 +9,9 @@ export default class BFS {
         this.start = this.map[startY][startX]
     }
 
-    // Reset map before every search
-    resetMap() {
-        for (let y = 0; y < this.map.length; y++) {
-            for (let x = 0; x < this.map[y].length; x++) {
-                this.map[y][x].visited = false;
-                this.map[y][x].parent = null;
-            }
-        }
-    }
-
     // Find path to goal
     findPath() {
-        this.resetMap();
+        
         // Queue to keep the nodes
         let queue = [];
 

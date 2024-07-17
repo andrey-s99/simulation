@@ -27,16 +27,20 @@ export default class Carnivore extends Creature {
         const newX = pathToGoal[0][0];
         const newY = pathToGoal[0][1];
 
-        // If lands on goal -- eat goal before moving
+        // If lands on goal -- attack goal before moving
         if ([config.icons.herbivore1].includes(map.map[newY][newX].icon)) {
-            map.removeInstance(newX, newY, "Herbivore");
+            this.makeAttack(map.getInstance(newX, newY, "Herbivore"), map);
         }
 
         this.x = newX;
         this.y = newY;
     }
 
-    makeAttack() {
-        console.log("Carnivore makes attack");
+    makeAttack(prey, map) {
+        console.log(`Carnivore attacks ${prey} for ${this.attackDmg} damage`);
+        prey.hp -= this.attackDmg;
+        if (prey.hp <= 0) {
+            map.removeInstance(prey.x, prey.y, "Herbivore");
+        }
     }
 }
